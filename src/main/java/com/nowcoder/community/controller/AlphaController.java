@@ -1,12 +1,14 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.service.AlphaService;
+import com.nowcoder.community.util.CommunityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -123,5 +125,30 @@ public class AlphaController {
         emp.put("age",23);
         emp.put("salary",8000);
         return emp;
+    }
+
+    //cookie示例
+    @RequestMapping(path = "cookie/set",method = RequestMethod.GET)
+    @ResponseBody
+    public String setCookie(HttpServletResponse response){
+        //创建Cookie
+        Cookie cookie = new Cookie("code", CommunityUtil.generateUUID());
+        //设置cookie生效的范围
+        cookie.setPath("/community/alpha");
+        //Cookie默认发送给浏览器，关闭就消失，但是可以设置生效时间，就会存在硬盘里，直到超过这个时间才会失效
+        //设置Cookie的生存时间
+        cookie.setMaxAge(60 * 10);//10分钟
+        //发送Cookie，把它放在响应的头里
+        response.addCookie(cookie);
+        return "set cookie";
+    }
+
+    //ajax示例,不是返回网页，返回的是字符串，所以加上@ResponseBody
+    @RequestMapping(path = "/ajax",method = RequestMethod.POST)
+    @ResponseBody
+    public String testAjax(String name, int age){
+        System.out.println(name);
+        System.out.println(age);
+        return CommunityUtil.getJSONString(0,"操作成功！");
     }
 }
